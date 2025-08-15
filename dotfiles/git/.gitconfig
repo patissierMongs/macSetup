@@ -1,0 +1,123 @@
+[user]
+    name = Your Name
+    email = your.email@example.com
+
+[core]
+    editor = nvim
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
+    pager = delta
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[init]
+    defaultBranch = main
+
+[color]
+    ui = auto
+    diff = auto
+    status = auto
+    branch = auto
+
+[push]
+    default = current
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
+    ff = only
+
+[fetch]
+    prune = true
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[diff]
+    tool = vimdiff
+    colorMoved = default
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    line-numbers = true
+    side-by-side = true
+    syntax-theme = "Monokai Extended"
+
+[alias]
+    # Status & Info
+    s = status -sb
+    st = status
+    
+    # Adding
+    a = add
+    aa = add .
+    ap = add -p
+    
+    # Committing
+    c = commit
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+    
+    # Branching
+    b = branch
+    ba = branch -a
+    bd = branch -d
+    bD = branch -D
+    co = checkout
+    cob = checkout -b
+    
+    # Merging & Rebasing
+    m = merge
+    rb = rebase
+    rbi = rebase -i
+    rbc = rebase --continue
+    rba = rebase --abort
+    
+    # Pushing & Pulling
+    p = push
+    pf = push --force-with-lease
+    pl = pull
+    plr = pull --rebase
+    
+    # Diff
+    d = diff
+    ds = diff --staged
+    dt = difftool
+    
+    # Logging
+    l = log --oneline --graph --decorate
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    ll = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]' --decorate --numstat
+    
+    # Stashing
+    sh = stash
+    shp = stash pop
+    shl = stash list
+    sha = stash apply
+    
+    # Reset
+    unstage = reset HEAD --
+    uncommit = reset --soft HEAD~1
+    discard = checkout --
+    
+    # Finding
+    find = "!git ls-files | grep -i"
+    grep = grep -Ii
+    
+    # Utils
+    aliases = config --get-regexp alias
+    branches = for-each-ref --sort=-committerdate --format='%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)' refs/remotes
+    contributors = shortlog --summary --numbered
+    
+[credential]
+    helper = osxkeychain
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true

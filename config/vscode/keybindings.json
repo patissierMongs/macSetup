@@ -1,0 +1,187 @@
+[
+  // ═══════════════════════════════════════════════════════════════
+  // VS Code Keybindings
+  // ═══════════════════════════════════════════════════════════════
+
+  // Terminal
+  {
+    "key": "cmd+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "cmd+shift+`",
+    "command": "workbench.action.terminal.new"
+  },
+  {
+    "key": "cmd+shift+[",
+    "command": "workbench.action.terminal.focusPrevious",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "cmd+shift+]",
+    "command": "workbench.action.terminal.focusNext",
+    "when": "terminalFocus"
+  },
+
+  // Editor navigation
+  {
+    "key": "ctrl+h",
+    "command": "workbench.action.navigateLeft"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.navigateRight"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.navigateUp"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.navigateDown"
+  },
+
+  // File explorer
+  {
+    "key": "cmd+shift+e",
+    "command": "workbench.view.explorer"
+  },
+
+  // Search
+  {
+    "key": "cmd+shift+f",
+    "command": "workbench.action.findInFiles"
+  },
+
+  // Command palette
+  {
+    "key": "cmd+shift+p",
+    "command": "workbench.action.showCommands"
+  },
+
+  // Quick open
+  {
+    "key": "cmd+p",
+    "command": "workbench.action.quickOpen"
+  },
+
+  // Format document
+  {
+    "key": "shift+alt+f",
+    "command": "editor.action.formatDocument"
+  },
+
+  // Debugging
+  {
+    "key": "f5",
+    "command": "workbench.action.debug.start",
+    "when": "!inDebugMode"
+  },
+  {
+    "key": "shift+f5",
+    "command": "workbench.action.debug.stop",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "f9",
+    "command": "editor.debug.action.toggleBreakpoint"
+  },
+  {
+    "key": "f10",
+    "command": "workbench.action.debug.stepOver",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "f11",
+    "command": "workbench.action.debug.stepInto",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "shift+f11",
+    "command": "workbench.action.debug.stepOut",
+    "when": "inDebugMode"
+  },
+
+  // Run code
+  {
+    "key": "cmd+enter",
+    "command": "code-runner.run"
+  },
+  {
+    "key": "cmd+shift+enter",
+    "command": "code-runner.stop"
+  }
+]
+EOF══════════════════════════════════════════════════════════════
+-- LazyVim Configuration
+-- ═══════════════════════════════════════════════════════════════
+
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Load configuration
+require("config.options")
+require("config.keymaps")
+require("config.autocmds")
+
+-- Setup lazy.nvim and load plugins
+require("lazy").setup({
+  spec = {
+    -- Import LazyVim plugins
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- Import language specific plugins
+    { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.json" },
+    { import = "lazyvim.plugins.extras.lang.python" },
+    { import = "lazyvim.plugins.extras.lang.rust" },
+    { import = "lazyvim.plugins.extras.lang.go" },
+    { import = "lazyvim.plugins.extras.lang.java" },
+    { import = "lazyvim.plugins.extras.lang.clangd" },
+    { import = "lazyvim.plugins.extras.lang.markdown" },
+    { import = "lazyvim.plugins.extras.lang.yaml" },
+    { import = "lazyvim.plugins.extras.lang.docker" },
+    { import = "lazyvim.plugins.extras.lang.terraform" },
+    -- Import coding plugins
+    { import = "lazyvim.plugins.extras.coding.copilot" },
+    { import = "lazyvim.plugins.extras.coding.yanky" },
+    -- Import editor plugins
+    { import = "lazyvim.plugins.extras.editor.mini-files" },
+    { import = "lazyvim.plugins.extras.editor.leap" },
+    -- Import UI plugins
+    { import = "lazyvim.plugins.extras.ui.mini-animate" },
+    -- Import debugging plugins
+    { import = "lazyvim.plugins.extras.dap.core" },
+    { import = "lazyvim.plugins.extras.dap.nlua" },
+    -- Import test plugins
+    { import = "lazyvim.plugins.extras.test.core" },
+    -- Import custom plugins
+    { import = "plugins" },
+  },
+  defaults = {
+    lazy = false,
+    version = false,
+  },
+  checker = { enabled = true },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "gzip",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
+    },
+  },
+})

@@ -1,0 +1,220 @@
+{
+  // ═══════════════════════════════════════════════════════════════
+  // VS Code Settings
+  // ═══════════════════════════════════════════════════════════════
+
+  // Editor
+  "editor.fontSize": 14,
+  "editor.fontFamily": "JetBrainsMono Nerd Font, Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.lineHeight": 1.6,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.renderWhitespace": "trailing",
+  "editor.rulers": [80, 120],
+  "editor.wordWrap": "off",
+  "editor.minimap.enabled": true,
+  "editor.minimap.renderCharacters": false,
+  "editor.cursorStyle": "line",
+  "editor.cursorBlinking": "smooth",
+  "editor.smoothScrolling": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.suggestSelection": "first",
+  "editor.snippetSuggestions": "top",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.inlineSuggest.enabled": true,
+
+  // Terminal
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.shell.osx": "/bin/zsh",
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.scrollback": 10000,
+
+  // Workbench
+  "workbench.colorTheme": "Tokyo Night",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.startupEditor": "none",
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.showTabs": true,
+  "workbench.sideBar.location": "left",
+  "workbench.activityBar.visible": true,
+  "workbench.statusBar.visible": true,
+  "workbench.tree.indent": 20,
+
+  // Files
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/venv": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/venv/**": true
+  },
+
+  // Explorer
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.compactFolders": false,
+
+  // Search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/.venv": true,
+    "**/venv": true
+  },
+
+  // Git
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "gitlens.hovers.currentLine.over": "line",
+
+  // Vim
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": true,
+  "vim.hlsearch": true,
+  "vim.incsearch": true,
+  "vim.leader": "<space>",
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-f>": false
+  },
+  "vim.normalModeKeyBindingsNonRecursive": [
+    { "before": ["<leader>", "w"], "commands": [":w"] },
+    { "before": ["<leader>", "q"], "commands": [":q"] },
+    { "before": ["<leader>", "x"], "commands": [":x"] },
+    { "before": ["<leader>", "f", "f"], "commands": ["workbench.action.quickOpen"] },
+    { "before": ["<leader>", "f", "g"], "commands": ["workbench.action.findInFiles"] },
+    { "before": ["<leader>", "e"], "commands": ["workbench.view.explorer"] },
+    { "before": ["<leader>", "b", "d"], "commands": ["workbench.action.closeActiveEditor"] },
+    { "before": ["<leader>", "b", "n"], "commands": ["workbench.action.nextEditor"] },
+    { "before": ["<leader>", "b", "p"], "commands": ["workbench.action.previousEditor"] },
+    { "before": ["g", "d"], "commands": ["editor.action.revealDefinition"] },
+    { "before": ["g", "r"], "commands": ["editor.action.goToReferences"] },
+    { "before": ["g", "i"], "commands": ["editor.action.goToImplementation"] },
+    { "before": ["<leader>", "r", "n"], "commands": ["editor.action.rename"] },
+    { "before": ["<leader>", "c", "a"], "commands": ["editor.action.quickFix"] },
+    { "before": ["[", "d"], "commands": ["editor.action.marker.prev"] },
+    { "before": ["]", "d"], "commands": ["editor.action.marker.next"] }
+  ],
+  "vim.insertModeKeyBindings": [
+    { "before": ["j", "k"], "after": ["<Esc>"] },
+    { "before": ["j", "j"], "after": ["<Esc>"] }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    { "before": ["<leader>", "c"], "commands": ["editor.action.commentLine"] }
+  ],
+
+  // Python
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    },
+    "editor.tabSize": 4
+  },
+  "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.formatting.provider": "black",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+
+  // JavaScript/TypeScript
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // JSON
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // HTML/CSS
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // Markdown
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": false
+    }
+  },
+
+  // C/C++
+  "C_Cpp.default.cStandard": "c11",
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.clang_format_style": "{ BasedOnStyle: Google, IndentWidth: 4 }",
+
+  // Java
+  "java.home": "/opt/homebrew/opt/openjdk",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "/opt/homebrew/opt/openjdk",
+      "default": true
+    }
+  ],
+
+  // Extensions
+  "extensions.ignoreRecommendations": false,
+  "extensions.autoUpdate": true,
+
+  // Misc
+  "telemetry.telemetryLevel": "off",
+  "update.mode": "start",
+  "security.workspace.trust.untrustedFiles": "open",
+  "redhat.telemetry.enabled": false
+}

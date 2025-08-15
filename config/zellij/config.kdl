@@ -1,0 +1,165 @@
+// ═══════════════════════════════════════════════════════════════
+// Zellij Configuration
+// ═══════════════════════════════════════════════════════════════
+
+keybinds clear-defaults=true {
+    normal {
+        // Pane navigation
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt l" { MoveFocus "Right"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+
+        // Pane management
+        bind "Alt n" { NewPane; }
+        bind "Alt d" { NewPane "Down"; }
+        bind "Alt r" { NewPane "Right"; }
+        bind "Alt x" { CloseFocus; }
+        bind "Alt f" { ToggleFocusFullscreen; }
+        bind "Alt z" { TogglePaneFrames; }
+
+        // Tab management
+        bind "Alt t" { NewTab; }
+        bind "Alt Tab" { GoToNextTab; }
+        bind "Alt Shift Tab" { GoToPreviousTab; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+        bind "Alt w" { CloseTab; }
+        bind "Alt [" { GoToPreviousTab; }
+        bind "Alt ]" { GoToNextTab; }
+        bind "Alt Shift r" { SwitchToMode "RenameTab"; }
+
+        // Resize mode
+        bind "Alt =" { SwitchToMode "Resize"; }
+
+        // Move mode
+        bind "Alt m" { SwitchToMode "Move"; }
+
+        // Scroll mode
+        bind "Alt s" { SwitchToMode "Scroll"; }
+
+        // Session management
+        bind "Alt o" { SwitchToMode "Session"; }
+        bind "Alt q" { Quit; }
+
+        // Search
+        bind "Alt /" { SwitchToMode "EnterSearch"; SearchInput 0; }
+
+        // Tmux compatibility
+        bind "Ctrl b" { SwitchToMode "Tmux"; }
+    }
+
+    resize {
+        bind "h" "Left" { Resize "Increase Left"; }
+        bind "j" "Down" { Resize "Increase Down"; }
+        bind "k" "Up" { Resize "Increase Up"; }
+        bind "l" "Right" { Resize "Increase Right"; }
+        bind "H" { Resize "Decrease Left"; }
+        bind "J" { Resize "Decrease Down"; }
+        bind "K" { Resize "Decrease Up"; }
+        bind "L" { Resize "Decrease Right"; }
+        bind "=" { Resize "Increase"; }
+        bind "-" { Resize "Decrease"; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+
+    move {
+        bind "h" "Left" { MovePane "Left"; }
+        bind "j" "Down" { MovePane "Down"; }
+        bind "k" "Up" { MovePane "Up"; }
+        bind "l" "Right" { MovePane "Right"; }
+        bind "n" "Tab" { MovePane; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+
+    scroll {
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" { PageScrollUp; }
+        bind "d" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+
+    search {
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" { PageScrollUp; }
+        bind "n" { Search "down"; }
+        bind "N" { Search "up"; }
+        bind "c" { SearchToggleOption "CaseSensitivity"; }
+        bind "w" { SearchToggleOption "Wrap"; }
+        bind "o" { SearchToggleOption "WholeWord"; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+
+    session {
+        bind "d" { Detach; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+
+    tmux {
+        bind "d" { NewPane "Down"; SwitchToMode "Normal"; }
+        bind "r" { NewPane "Right"; SwitchToMode "Normal"; }
+        bind "z" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
+        bind "c" { NewTab; SwitchToMode "Normal"; }
+        bind "," { SwitchToMode "RenameTab"; }
+        bind "p" { GoToPreviousTab; SwitchToMode "Normal"; }
+        bind "n" { GoToNextTab; SwitchToMode "Normal"; }
+        bind "h" { MoveFocus "Left"; SwitchToMode "Normal"; }
+        bind "l" { MoveFocus "Right"; SwitchToMode "Normal"; }
+        bind "j" { MoveFocus "Down"; SwitchToMode "Normal"; }
+        bind "k" { MoveFocus "Up"; SwitchToMode "Normal"; }
+        bind "o" { FocusNextPane; SwitchToMode "Normal"; }
+        bind "x" { CloseFocus; SwitchToMode "Normal"; }
+        bind "Esc" "Enter" { SwitchToMode "Normal"; }
+    }
+}
+
+plugins {
+    tab-bar { path "tab-bar"; }
+    status-bar { path "status-bar"; }
+    strider { path "strider"; }
+    compact-bar { path "compact-bar"; }
+}
+
+themes {
+    tokyo-night {
+        fg "#a9b1d6"
+        bg "#1a1b26"
+        black "#32344a"
+        red "#f7768e"
+        green "#9ece6a"
+        yellow "#e0af68"
+        blue "#7aa2f7"
+        magenta "#ad8ee6"
+        cyan "#449dab"
+        white "#787c99"
+        orange "#ff9e64"
+    }
+}
+
+theme "tokyo-night"
+
+default_layout "dev"
+default_shell "zsh"
+pane_frames false
+copy_on_select true
+scrollback_editor "/opt/homebrew/bin/nvim"
+session_serialization true
+serialize_pane_viewport true
+mouse_mode true
+copy_command "pbcopy"
+default_mode "normal"
+simplified_ui false
+on_force_close "quit"
+scroll_buffer_size 10000
