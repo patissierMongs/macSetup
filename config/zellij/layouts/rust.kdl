@@ -1,0 +1,70 @@
+layout {
+  tab name="main" split_direction="vertical" {
+    pane name="editor" size="50%" {
+      command "zsh"
+      args "-l" "-c" "nvim"
+    }
+
+    pane split_direction="horizontal" {
+      pane name="cargo" size="40%" {
+        command "zsh"
+        args "-l" "-c" "if [ -f Cargo.toml ]; then echo 'Rust project detected:'; rustc --version; cargo --version; echo ''; cargo check; else echo 'Cargo Terminal - Ready for: cargo new, cargo build, cargo run'; rustc --version; cargo --version; fi; exec zsh -l"
+      }
+
+      pane split_direction="vertical" {
+        pane name="test" size="50%" {
+          command "zsh"
+          args "-l" "-c" "echo 'Test Terminal - Ready for: cargo test, cargo test --lib, cargo bench'; exec zsh -l"
+        }
+        pane name="run" {
+          command "zsh"
+          args "-l" "-c" "echo 'Run Terminal - Execute: cargo run, cargo run --release'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="tools" split_direction="horizontal" {
+    pane name="format" size="50%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Rust Tools: rustfmt, clippy, cargo fmt, cargo clippy'; exec zsh -l"
+    }
+    pane name="debug" {
+      command "zsh"
+      args "-l" "-c" "echo 'Debug: rust-gdb, rust-lldb, cargo build --debug'; exec zsh -l"
+    }
+  }
+
+  tab name="cargo" split_direction="horizontal" {
+    pane name="deps" size="60%" {
+      command "zsh"
+      args "-l" "-c" "if [ -f Cargo.toml ]; then echo 'Cargo Dependencies:'; cargo tree | head -15; else echo 'Dependency Management: cargo add, cargo update, cargo tree'; fi; exec zsh -l"
+    }
+    pane name="info" {
+      command "zsh"
+      args "-l" "-c" "echo 'Rust Toolchain:'; rustup show; echo ''; echo 'Cargo Home:' $CARGO_HOME; exec zsh -l"
+    }
+  }
+
+  tab name="docs" split_direction="horizontal" {
+    pane name="rustdoc" size="60%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Documentation: cargo doc --open, rustdoc'; exec zsh -l"
+    }
+    pane name="examples" {
+      command "zsh"
+      args "-l" "-c" "if [ -d examples ]; then echo 'Examples found:'; ls examples/; else echo 'Examples: cargo run --example <name>'; fi; exec zsh -l"
+    }
+  }
+
+  tab name="git" split_direction="horizontal" {
+    pane name="lazygit" size="70%" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo'; exec zsh -l; fi"
+    }
+    pane name="status" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git status; else echo 'Not a git repo'; fi; exec zsh -l"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+layout {
+  tab name="main" split_direction="vertical" {
+    pane name="editor" size="50%" {
+      command "zsh"
+      args "-l" "-c" "nvim"
+    }
+
+    pane split_direction="horizontal" {
+      pane name="build" size="40%" {
+        command "zsh"
+        args "-l" "-c" "if [ -f go.mod ]; then echo 'Go module detected:'; go version; echo ''; go mod tidy; else echo 'Go Build Terminal - Ready for: go build, go run, go install'; go version; fi; exec zsh -l"
+      }
+
+      pane split_direction="vertical" {
+        pane name="test" size="50%" {
+          command "zsh"
+          args "-l" "-c" "echo 'Test Terminal - Ready for: go test, go test -v, go test -cover'; exec zsh -l"
+        }
+        pane name="run" {
+          command "zsh"
+          args "-l" "-c" "echo 'Run Terminal - Execute: go run main.go'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="tools" split_direction="horizontal" {
+    pane name="format" size="50%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Go Tools: gofmt, goimports, golint, go vet'; exec zsh -l"
+    }
+    pane name="debug" {
+      command "zsh"
+      args "-l" "-c" "echo 'Debug: delve (dlv), go build -gcflags=\"-N -l\"'; exec zsh -l"
+    }
+  }
+
+  tab name="modules" split_direction="horizontal" {
+    pane name="deps" size="60%" {
+      command "zsh"
+      args "-l" "-c" "if [ -f go.mod ]; then echo 'Go Dependencies:'; go list -m all | head -15; else echo 'Module Management: go mod init, go mod tidy, go get'; fi; exec zsh -l"
+    }
+    pane name="env" {
+      command "zsh"
+      args "-l" "-c" "echo 'Go Environment:'; go env GOPATH GOROOT GOOS GOARCH; echo ''; echo 'GOPATH:' $GOPATH; echo 'GOROOT:' $GOROOT; exec zsh -l"
+    }
+  }
+
+  tab name="git" split_direction="horizontal" {
+    pane name="lazygit" size="70%" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo'; exec zsh -l; fi"
+    }
+    pane name="status" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git status; else echo 'Not a git repo'; fi; exec zsh -l"
+    }
+  }
+}

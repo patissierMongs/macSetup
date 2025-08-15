@@ -1,0 +1,59 @@
+layout {
+  tab name="main" split_direction="vertical" {
+    pane name="editor" size="50%" {
+      command "zsh"
+      args "-l" "-c" "nvim"
+    }
+
+    pane split_direction="horizontal" {
+      pane name="build" size="40%" {
+        command "zsh"
+        args "-l" "-c" "if [ -f pom.xml ]; then echo 'Maven project detected - Ready for: mvn compile, mvn test, mvn package'; elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then echo 'Gradle project detected - Ready for: ./gradlew build, ./gradlew test'; elif [ -f build.xml ]; then echo 'Ant project detected - Ready for: ant compile, ant test'; else echo 'Java Build Terminal - Ready for: javac, java'; fi; exec zsh -l"
+      }
+
+      pane split_direction="vertical" {
+        pane name="test" size="50%" {
+          command "zsh"
+          args "-l" "-c" "echo 'Test Terminal - Ready for: JUnit, TestNG, mvn test, gradle test'; exec zsh -l"
+        }
+        pane name="run" {
+          command "zsh"
+          args "-l" "-c" "echo 'Run Terminal - Execute your Java applications'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="tools" split_direction="horizontal" {
+    pane name="debug" size="50%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Debug: jdb, IDE debugging, remote debugging (-agentlib:jdwp)'; exec zsh -l"
+    }
+    pane name="profiling" {
+      command "zsh"
+      args "-l" "-c" "echo 'Profiling: JProfiler, VisualVM, jstack, jmap, jstat'; exec zsh -l"
+    }
+  }
+
+  tab name="deps" split_direction="horizontal" {
+    pane name="maven" size="60%" {
+      command "zsh"
+      args "-l" "-c" "if [ -f pom.xml ]; then echo 'Maven Dependencies:'; mvn dependency:tree | head -20; elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then echo 'Gradle Dependencies:'; ./gradlew dependencies | head -20; else echo 'Dependency Management: Maven, Gradle, SBT'; fi; exec zsh -l"
+    }
+    pane name="jvm" {
+      command "zsh"
+      args "-l" "-c" "echo 'JVM Info:'; java -version; echo ''; echo 'JAVA_HOME:'; echo $JAVA_HOME; exec zsh -l"
+    }
+  }
+
+  tab name="git" split_direction="horizontal" {
+    pane name="lazygit" size="70%" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo'; exec zsh -l; fi"
+    }
+    pane name="status" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git status; else echo 'Not a git repo'; fi; exec zsh -l"
+    }
+  }
+}

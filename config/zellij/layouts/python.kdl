@@ -1,0 +1,59 @@
+layout {
+  tab name="main" split_direction="vertical" {
+    pane name="editor" size="50%" {
+      command "zsh"
+      args "-l" "-c" "nvim"
+    }
+
+    pane split_direction="horizontal" {
+      pane name="python" size="40%" {
+        command "zsh"
+        args "-l" "-c" "if [ -f requirements.txt ] || [ -f pyproject.toml ] || [ -f Pipfile ]; then echo 'Python project detected'; if [ -d venv ]; then source venv/bin/activate; elif [ -d .venv ]; then source .venv/bin/activate; fi; fi; exec zsh -l"
+      }
+
+      pane split_direction="vertical" {
+        pane name="test" size="50%" {
+          command "zsh"
+          args "-l" "-c" "echo 'Test Terminal - Ready for: pytest, unittest, nose2'; exec zsh -l"
+        }
+        pane name="jupyter" {
+          command "zsh"
+          args "-l" "-c" "echo 'Jupyter/IPython Terminal - Ready for: jupyter notebook, ipython'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="tools" split_direction="horizontal" {
+    pane name="linting" size="50%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Linting: flake8, pylint, black, mypy'; exec zsh -l"
+    }
+    pane name="debug" {
+      command "zsh"
+      args "-l" "-c" "echo 'Debug: pdb, ipdb, breakpoint()'; exec zsh -l"
+    }
+  }
+
+  tab name="env" split_direction="horizontal" {
+    pane name="pip" size="60%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Package Management: pip, conda, poetry'; if [ -f requirements.txt ]; then echo 'requirements.txt found'; cat requirements.txt | head -10; fi; exec zsh -l"
+    }
+    pane name="venv" {
+      command "zsh"
+      args "-l" "-c" "echo 'Virtual Environment Status:'; if [ -n \"$VIRTUAL_ENV\" ]; then echo \"Active: $VIRTUAL_ENV\"; else echo 'No virtual environment active'; fi; exec zsh -l"
+    }
+  }
+
+  tab name="git" split_direction="horizontal" {
+    pane name="lazygit" size="70%" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo'; exec zsh -l; fi"
+    }
+    pane name="status" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git status; else echo 'Not a git repo'; fi; exec zsh -l"
+    }
+  }
+}

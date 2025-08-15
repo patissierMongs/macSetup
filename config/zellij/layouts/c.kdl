@@ -1,0 +1,48 @@
+layout {
+  tab name="main" split_direction="vertical" {
+    pane name="editor" size="50%" {
+      command "zsh"
+      args "-l" "-c" "nvim"
+    }
+
+    pane split_direction="horizontal" {
+      pane name="build" size="40%" {
+        command "zsh"
+        args "-l" "-c" "echo 'C Build Terminal - Ready for: gcc, make, cmake'; exec zsh -l"
+      }
+
+      pane split_direction="vertical" {
+        pane name="debug" size="50%" {
+          command "zsh"
+          args "-l" "-c" "echo 'Debug Terminal - Ready for: gdb, valgrind'; exec zsh -l"
+        }
+        pane name="run" {
+          command "zsh"
+          args "-l" "-c" "echo 'Run Terminal - Execute your compiled programs'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="tools" split_direction="horizontal" {
+    pane name="memory" size="50%" {
+      command "zsh"
+      args "-l" "-c" "echo 'Memory Analysis: valgrind --tool=memcheck ./program'; exec zsh -l"
+    }
+    pane name="static" {
+      command "zsh"
+      args "-l" "-c" "echo 'Static Analysis: cppcheck, clang-tidy'; exec zsh -l"
+    }
+  }
+
+  tab name="git" split_direction="horizontal" {
+    pane name="lazygit" size="70%" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo'; exec zsh -l; fi"
+    }
+    pane name="status" {
+      command "zsh"
+      args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git status; else echo 'Not a git repo'; fi; exec zsh -l"
+    }
+  }
+}
