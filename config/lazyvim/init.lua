@@ -1,9 +1,5 @@
--- ═══════════════════════════════════════════════════════════════
--- Custom Plugins
--- ═══════════════════════════════════════════════════════════════
-
+-- Custom Plugins (updated: typescript runner unified to ts-node, safer dap paths)
 return {
-  -- Theme
   {
     "folke/tokyonight.nvim",
     lazy = false,
@@ -14,8 +10,6 @@ return {
       terminal_colors = true,
     },
   },
-
-  -- Better escape
   {
     "max397574/better-escape.nvim",
     event = "InsertEnter",
@@ -26,8 +20,6 @@ return {
       })
     end,
   },
-
-  -- Smooth scrolling
   {
     "karb94/neoscroll.nvim",
     event = "WinScrolled",
@@ -36,17 +28,10 @@ return {
         mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "<C-y>", "<C-e>", "zt", "zz", "zb" },
         hide_cursor = true,
         stop_eof = true,
-        use_local_scrolloff = false,
-        respect_scrolloff = false,
         cursor_scrolls_alone = true,
-        easing_function = nil,
-        pre_hook = nil,
-        post_hook = nil,
       })
     end,
   },
-
-  -- Git signs
   {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
@@ -54,34 +39,13 @@ return {
       signs = {
         add = { text = "▎" },
         change = { text = "▎" },
-        delete = { text = "" },
-        topdelete = { text = "" },
+        delete = { text = "▎" },
+        topdelete = { text = "▎" },
         changedelete = { text = "▎" },
         untracked = { text = "▎" },
       },
-      on_attach = function(buffer)
-        local gs = package.loaded.gitsigns
-
-        local function map(mode, l, r, desc)
-          vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
-        end
-
-        map("n", "]h", gs.next_hunk, "Next Hunk")
-        map("n", "[h", gs.prev_hunk, "Prev Hunk")
-        map({ "n", "v" }, "<leader>ghs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-        map({ "n", "v" }, "<leader>ghr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-        map("n", "<leader>ghS", gs.stage_buffer, "Stage Buffer")
-        map("n", "<leader>ghu", gs.undo_stage_hunk, "Undo Stage Hunk")
-        map("n", "<leader>ghR", gs.reset_buffer, "Reset Buffer")
-        map("n", "<leader>ghp", gs.preview_hunk, "Preview Hunk")
-        map("n", "<leader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
-        map("n", "<leader>ghd", gs.diffthis, "Diff This")
-        map("n", "<leader>ghD", function() gs.diffthis("~") end, "Diff This ~")
-      end,
     },
   },
-
-  -- Copilot
   {
     "github/copilot.vim",
     event = "InsertEnter",
@@ -90,8 +54,6 @@ return {
       vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
     end,
   },
-
-  -- Debugging
   {
     "mfussenegger/nvim-dap",
     dependencies = {
@@ -102,27 +64,19 @@ return {
     config = function()
       local dap = require("dap")
       local dapui = require("dapui")
-
       dapui.setup()
       require("nvim-dap-virtual-text").setup()
 
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open()
-      end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close()
-      end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close()
-      end
+      dap.listeners.after.event_initialized["dapui_config"] = function() dapui.open() end
+      dap.listeners.before.event_terminated["dapui_config"] = function() dapui.close() end
+      dap.listeners.before.event_exited["dapui_config"] = function() dapui.close() end
 
-      -- Python
+      -- Dynamic python path
       dap.adapters.python = {
         type = "executable",
-        command = "/opt/homebrew/bin/python3",
+        command = vim.fn.exepath("python3"),
         args = { "-m", "debugpy.adapter" },
       }
-
       dap.configurations.python = {
         {
           type = "python",
@@ -131,25 +85,27 @@ return {
           program = "${file}",
           pythonPath = function()
             local cwd = vim.fn.getcwd()
-            if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
-              return cwd .. "/venv/bin/python"
-            elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
-              return cwd .. "/.venv/bin/python"
-            else
-              return "/opt/homebrew/bin/python3"
+            local candidates = {
+              cwd .. "/venv/bin/python",
+              cwd .. "/.venv/bin/python",
+              os.getenv("NVIM_PYTHON_HOST_PROG"),
+              vim.fn.exepath("python3"),
+            }
+            for _, p in ipairs(candidates) do
+              if p and vim.fn.executable(p) == 1 then return p end
             end
+            return "python3"
           end,
         },
       }
 
-      -- C/C++
-      dap.adapters.lldb = {
-        type = "executable",
-        command = "/opt/homebrew/opt/llvm/bin/lldb-vscode",
-        name = "lldb",
-      }
-
-      dap.configurations.cpp = {
+      -- LLDB (C/C++/Rust)
+      local lldb = "/opt/homebrew/opt/llvm/bin/lldb-vscode"
+      if vim.fn.executable(lldb) ~= 1 then
+        lldb = "lldb-vscode"
+      end
+      dap.adapters.lldb = { type = "executable", command = lldb, name = "lldb" }
+      local cpp_cfg = {
         {
           name = "Launch",
           type = "lldb",
@@ -162,49 +118,28 @@ return {
           args = {},
         },
       }
-
-      dap.configurations.c = dap.configurations.cpp
-      dap.configurations.rust = dap.configurations.cpp
+      dap.configurations.cpp = cpp_cfg
+      dap.configurations.c = cpp_cfg
+      dap.configurations.rust = cpp_cfg
     end,
   },
-
-  -- Better terminal
   {
     "akinsho/toggleterm.nvim",
     version = "*",
     opts = {
       size = 20,
       open_mapping = [[<c-\>]],
-      hide_numbers = true,
-      shade_filetypes = {},
-      shade_terminals = true,
-      shading_factor = 2,
-      start_in_insert = true,
-      insert_mappings = true,
-      persist_size = true,
       direction = "float",
-      close_on_exit = true,
-      shell = vim.o.shell,
-      float_opts = {
-        border = "curved",
-        winblend = 0,
-        highlights = {
-          border = "Normal",
-          background = "Normal",
-        },
-      },
+      start_in_insert = true,
+      float_opts = { border = "curved" },
     },
   },
-
-  -- Markdown preview
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
-
-  -- Code runner
   {
     "CRAG666/code_runner.nvim",
     config = function()
@@ -212,7 +147,7 @@ return {
         filetype = {
           java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
           python = "python3 -u",
-          typescript = "deno run",
+          typescript = "cd $dir && ts-node $fileName",
           rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
           c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
           cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",

@@ -1,29 +1,74 @@
 layout {
-    default_tab_template {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        children
-        pane size=2 borderless=true {
-            plugin location="zellij:status-bar"
-        }
-    }
+  // 메인 개발 탭: 좌측 Neovim, 우측은 (상) 쉘 (하) git + 로그
+  tab name="main" {
+    split_direction "vertical" {
+      // 좌측 에디터 (50% width)
+      pane name="editor" size="50%" {
+        command "zsh"
+        args "-l" "-c" "nvim"
+      }
 
-    tab name="Dev" focus=true {
-        pane split_direction="vertical" {
-            pane name="Editor" size="60%" focus=true
-            pane split_direction="horizontal" size="40%" {
-                pane name="REPL" size="50%"
-                pane name="Terminal" size="50%"
-            }
+      // 우측 복합 (수평 분할)
+      split_direction "horizontal" {
+        // 상단 쉘 (60% height)
+        pane name="shell" size="60%" {
+          command "zsh"
+          args "-l"
         }
-    }
 
-    tab name="Git" {
-        pane name="Git" command="lazygit"
-    }
+        // 하단 두 분할 (수직, 40% height)
+        split_direction "vertical" {
+          // lazygit 조건부 (50% width)
+          pane name="git" size="50%" {
+            command "zsh"
+            args "-l" "-c" "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then lazygit; else echo 'Not a git repo - starting shell'; exec zsh -l; fi"
+          }
 
-    tab name="Docker" {
-        pane name="Docker" command="lazydocker"
+          // 로그/모니터 pane (50% width)
+          pane name="monitor" {
+            command "zsh"
+            args "-l" "-c" "if [ -f ./logs/dev.log ]; then tail -f ./logs/dev.log; elif [ -f ./package.json ]; then echo 'Node.js project detected. Run: npm run dev'; exec zsh -l; else echo 'Monitor pane ready'; exec zsh -l; fi"
+          }
+        }
+      }
     }
+  }
+
+  // 모니터링 탭
+  tab name="monitor" {
+    split_direction "horizontal" {
+      pane name="system" size="50%" {
+        command "zsh"
+        args "-l" "-c" "if command -v htop >/dev/null; then htop; else top; fi"
+      }
+      pane name="network" {
+        command "zsh"
+        args "-l" "-c" "if command -v gping >/dev/null; then gping google.com; elif command -v ping >/dev/null; then ping google.com; else echo 'Network monitoring tools not available'; exec zsh -l; fi"
+      }
+    }
+  }
+
+  // DB/툴 모음 탭
+  tab name="database" {
+    split_direction "horizontal" {
+      pane name="db-cli" size="70%" {
+        command "zsh"
+        args "-l" "-c" "echo 'Database CLIs: psql, mysql, redis-cli, sqlite3'; exec zsh -l"
+      }
+      pane name="db-status" {
+        command "zsh"
+        args "-l" "-c" "echo 'DB Status Monitor'; if command -v brew >/dev/null; then brew services list | grep -E 'postgres|mysql|redis'; fi; exec zsh -l"
+      }
+    }
+  }
+
+  // 임시 scratch 탭
+  tab name="scratch" {
+    pane name="scratch" {
+      command "zsh"
+      args "-l"
+    }
+  }
+
+  pane_frames true
 }

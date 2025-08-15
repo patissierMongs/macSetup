@@ -1,0 +1,15 @@
+layout {
+  tab name="minimal" {
+    split_direction "vertical" {
+      pane name="editor" size="60%" {
+        command "zsh"
+        args "-l" "-c" "nvim"
+      }
+      pane name="terminal" {
+        command "zsh"
+        args "-l"
+      }
+    }
+  }
+  pane_frames true
+}

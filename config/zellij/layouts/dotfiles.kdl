@@ -1,0 +1,49 @@
+layout {
+  // Configuration files management layout
+  tab name="config" {
+    split_direction "vertical" {
+      pane name="editor" size="60%" {
+        command "zsh"
+        args "-l" "-c" "cd ~/.config && nvim"
+      }
+      pane name="terminal" {
+        command "zsh"
+        args "-l" "-c" "cd ~/.config && exec zsh -l"
+      }
+    }
+  }
+
+  tab name="dotfiles" {
+    split_direction "horizontal" {
+      pane name="zsh-config" size="50%" {
+        command "zsh"
+        args "-l" "-c" "nvim ~/.zshrc"
+      }
+      split_direction "vertical" {
+        pane name="nvim-config" size="50%" {
+          command "zsh"
+          args "-l" "-c" "cd ~/.config/nvim && nvim"
+        }
+        pane name="git-config" {
+          command "zsh"
+          args "-l" "-c" "nvim ~/.gitconfig"
+        }
+      }
+    }
+  }
+
+  tab name="git" {
+    split_direction "horizontal" {
+      pane name="lazygit" size="70%" {
+        command "zsh"
+        args "-l" "-c" "if [ -d .git ] || git rev-parse --git-dir >/dev/null 2>&1; then lazygit; else echo 'Not in a git repository'; exec zsh -l; fi"
+      }
+      pane name="status" {
+        command "zsh"
+        args "-l" "-c" "if [ -d .git ] || git rev-parse --git-dir >/dev/null 2>&1; then git status; echo '---'; git log --oneline -10; else echo 'Not in a git repository'; fi; exec zsh -l"
+      }
+    }
+  }
+
+  pane_frames true
+}

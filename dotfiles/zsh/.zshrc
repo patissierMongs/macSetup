@@ -203,6 +203,60 @@ alias nvimrc="nvim ~/.config/nvim/init.lua"
 alias gitconfig="nvim ~/.gitconfig"
 alias sshconfig="nvim ~/.ssh/config"
 alias hosts="sudo nvim /etc/hosts"
+alias starshiprc="nvim ~/.config/starship.toml"
+alias zellijrc="nvim ~/.config/zellij/config.kdl"
+alias weztermrc="nvim ~/.config/wezterm/wezterm.lua"
+alias aerospacerc="nvim ~/.config/aerospace/aerospace.toml"
+
+# Quick access
+alias dev="cd ~/Developer"
+alias docs="cd ~/Documents"
+alias downloads="cd ~/Downloads"
+alias desktop="cd ~/Desktop"
+
+# Modern tools shortcuts
+alias lsd="eza -la --tree --level=2"
+alias cat-less="bat --paging=always"
+alias json="fx"
+alias weather="curl wttr.in"
+alias myip-full="curl -s http://ipinfo.io/json | fx"
+alias ports="lsof -iTCP -sTCP:LISTEN -n -P"
+alias ram="ps aux | sort -nr -k 4"
+alias cpu="ps aux | sort -nr -k 3"
+
+# Docker shortcuts
+alias dcu="docker-compose up"
+alias dcd="docker-compose down"
+alias dcr="docker-compose restart"
+alias dcl="docker-compose logs -f"
+alias dps-format="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+
+# Kubernetes shortcuts
+alias kx="kubectl exec -it"
+alias kd="kubectl describe"
+alias kg="kubectl get"
+alias kctx="kubectl config current-context"
+alias kns="kubectl config view --minify --output 'jsonpath={..namespace}'"
+
+# Git extended
+alias gac="git add -A && git commit -m"
+alias gpo="git push origin"
+alias gpu="git push upstream"
+alias gst="git stash"
+alias gsp="git stash pop"
+alias gsl="git stash list"
+alias grh="git reset --hard"
+alias gcp="git cherry-pick"
+alias gmt="git mergetool"
+alias gdt="git difftool"
+
+# Productivity
+alias reload-dns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+alias finder="open ."
+alias preview="open -a Preview"
+alias chrome="open -a 'Google Chrome'"
+alias firefox="open -a Firefox"
+alias safari="open -a Safari"
 
 # ═══════════════════════════════════════════════════════════════
 # Functions
@@ -264,36 +318,171 @@ run() {
     file="$1"
     case "$file" in
         *.c)
-            gcc -o "${file%.c}" "$file" && "./${file%.c}"
+            echo "Compiling C: $file"
+            gcc -Wall -Wextra -std=c11 -o "${file%.c}" "$file" && "./${file%.c}"
             ;;
         *.cpp|*.cc)
-            g++ -o "${file%.*}" "$file" && "./${file%.*}"
+            echo "Compiling C++: $file"
+            g++ -Wall -Wextra -std=c++17 -o "${file%.*}" "$file" && "./${file%.*}"
             ;;
         *.java)
-            javac "$file" && java "${file%.java}"
+            echo "Compiling Java: $file"
+            javac -encoding UTF-8 "$file" && java -Dfile.encoding=UTF-8 "${file%.java}"
             ;;
         *.py)
+            echo "Running Python: $file"
             python3 "$file"
             ;;
         *.js)
+            echo "Running JavaScript: $file"
             node "$file"
             ;;
         *.ts)
+            echo "Running TypeScript: $file"
             ts-node "$file"
             ;;
         *.go)
+            echo "Running Go: $file"
             go run "$file"
             ;;
         *.rs)
+            echo "Compiling Rust: $file"
             rustc "$file" && "./${file%.rs}"
             ;;
         *.sh)
+            echo "Running Shell Script: $file"
             bash "$file"
             ;;
         *)
             echo "Unsupported file type: $file"
+            echo "Supported: .c .cpp .java .py .js .ts .go .rs .sh"
             ;;
     esac
+}
+
+# Find and kill process by name
+killp() {
+    if [ -z "$1" ]; then
+        echo "Usage: killp <process_name>"
+        return 1
+    fi
+    ps aux | grep -v grep | grep "$1" | awk '{print $2}' | xargs kill -9
+}
+
+# Create a backup of a file
+backup() {
+    if [ -z "$1" ]; then
+        echo "Usage: backup <file>"
+        return 1
+    fi
+    cp "$1" "$1.backup.$(date +%Y%m%d_%H%M%S)"
+    echo "Backup created: $1.backup.$(date +%Y%m%d_%H%M%S)"
+}
+
+# Quick project setup
+init-project() {
+    project_name="$1"
+    project_type="${2:-basic}"
+    
+    if [ -z "$project_name" ]; then
+        echo "Usage: init-project <name> [type]"
+        echo "Types: python, node, go, rust, java, basic"
+        return 1
+    fi
+    
+    mkdir -p "$project_name" && cd "$project_name"
+    
+    case "$project_type" in
+        python)
+            echo "# $project_name" > README.md
+            echo "*.pyc\n__pycache__/\nvenv/\n.env" > .gitignore
+            python3 -m venv venv
+            echo "Python project initialized"
+            ;;
+        node)
+            npm init -y
+            echo "node_modules/\n.env\ndist/" > .gitignore
+            echo "# $project_name" > README.md
+            echo "Node.js project initialized"
+            ;;
+        go)
+            go mod init "$project_name"
+            echo "# $project_name" > README.md
+            echo "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}" > main.go
+            echo "Go project initialized"
+            ;;
+        rust)
+            cargo init --name "$project_name"
+            echo "Rust project initialized"
+            ;;
+        java)
+            mkdir -p src/main/java src/test/java
+            echo "# $project_name" > README.md
+            echo "*.class\ntarget/\n.idea/" > .gitignore
+            echo "Java project initialized"
+            ;;
+        *)
+            echo "# $project_name" > README.md
+            touch .gitignore
+            echo "Basic project initialized"
+            ;;
+    esac
+    
+    git init
+    git add .
+    git commit -m "Initial commit"
+}
+
+# Quick file search and edit
+fe() {
+    local file
+    file=$(fd --type f --hidden --follow --exclude .git | fzf --preview 'bat --style=numbers --color=always --line-range :500 {}')
+    [ -n "$file" ] && nvim "$file"
+}
+
+# Quick directory navigation with fzf
+fd-cd() {
+    local dir
+    dir=$(fd --type d --hidden --follow --exclude .git | fzf --preview 'eza --tree --icons --level=2 {}')
+    [ -n "$dir" ] && cd "$dir"
+}
+
+# Git log with fzf
+fzf-git-log() {
+    git log --oneline --color=always | fzf --ansi --preview 'git show --color=always {1}'
+}
+
+# Process finder with kill option
+pf() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    if [ "x$pid" != "x" ]; then
+        echo $pid | xargs kill -${1:-9}
+    fi
+}
+
+# Docker container management
+docker-clean() {
+    echo "Cleaning up Docker..."
+    docker container prune -f
+    docker image prune -f
+    docker volume prune -f
+    docker network prune -f
+    echo "Docker cleanup complete"
+}
+
+# System info
+sysinfo() {
+    echo "System Information:"
+    echo "=================="
+    echo "OS: $(sw_vers -productName) $(sw_vers -productVersion)"
+    echo "Kernel: $(uname -r)"
+    echo "Shell: $SHELL"
+    echo "Terminal: $TERM"
+    echo "CPU: $(sysctl -n machdep.cpu.brand_string)"
+    echo "Memory: $(system_profiler SPHardwareDataType | grep "Memory:" | awk '{print $2 " " $3}')"
+    echo "Disk Usage:"
+    df -h | head -2
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -375,31 +564,3 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_VERIFY
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
-
-# Create .zshenv
-cat > $REPO_NAME/dotfiles/zsh/.zshenv << 'EOF'
-# ═══════════════════════════════════════════════════════════════
-# Zsh Environment Variables (loaded for all shells)
-# ═══════════════════════════════════════════════════════════════
-
-# Ensure path arrays do not contain duplicates
-typeset -gU cdpath fpath mailpath path
-
-# Set PATH
-path=(
-    $HOME/.local/bin
-    /opt/homebrew/bin
-    /opt/homebrew/sbin
-    /usr/local/bin
-    /usr/local/sbin
-    /usr/bin
-    /bin
-    /usr/sbin
-    /sbin
-    $path
-)
-
-# Homebrew
-if [[ -f "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
