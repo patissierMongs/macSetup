@@ -55,6 +55,12 @@ export PYTHONDONTWRITEBYTECODE=1
 # Go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+||||||| 6e4abac
+# C/C++
+alias gpp="g++ -std=c++17 -Wall -Wextra -O2"
+alias gccc="gcc -std=c11 -Wall -Wextra -O2"
+alias make="make -j$(sysctl -n hw.ncpu)"
+alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
 
 # Rust
 export PATH=$HOME/.cargo/bin:$PATH
@@ -128,7 +134,336 @@ alias zc='zellij -l c'
 # Functions
 # ═══════════════════════════════════════════════════════════════
 
+<<<<<<< HEAD
 # Fuzzy find and edit with LazyVim
+||||||| 6e4abac
+# Extract any archive
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar e "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)     echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Quick Python HTTP server
+server() {
+    local port="${1:-8000}"
+    python3 -m http.server "$port"
+}
+
+# Git commit with message
+gcam() {
+    git add . && git commit -m "$1"
+}
+
+# Git commit and push
+gcamp() {
+    git add . && git commit -m "$1" && git push
+}
+
+# Search and replace in files
+replace() {
+    if [ $# -ne 3 ]; then
+        echo "Usage: replace <find> <replace> <file_pattern>"
+        return 1
+    fi
+    fd "$3" -x sd "$1" "$2" {}
+}
+
+# Quick compile and run for different languages
+run() {
+    file="$1"
+    case "$file" in
+        *.c)
+            echo "Compiling C: $file"
+            gcc -Wall -Wextra -std=c11 -o "${file%.c}" "$file" && "./${file%.c}"
+            ;;
+        *.cpp|*.cc)
+            echo "Compiling C++: $file"
+            g++ -Wall -Wextra -std=c++17 -o "${file%.*}" "$file" && "./${file%.*}"
+            ;;
+        *.java)
+            echo "Compiling Java: $file"
+            javac -encoding UTF-8 "$file" && java -Dfile.encoding=UTF-8 "${file%.java}"
+            ;;
+        *.py)
+            echo "Running Python: $file"
+            python3 "$file"
+            ;;
+        *.js)
+            echo "Running JavaScript: $file"
+            node "$file"
+            ;;
+        *.ts)
+            echo "Running TypeScript: $file"
+            ts-node "$file"
+            ;;
+        *.go)
+            echo "Running Go: $file"
+            go run "$file"
+            ;;
+        *.rs)
+            echo "Compiling Rust: $file"
+            rustc "$file" && "./${file%.rs}"
+            ;;
+        *.sh)
+            echo "Running Shell Script: $file"
+            bash "$file"
+            ;;
+        *)
+            echo "Unsupported file type: $file"
+            echo "Supported: .c .cpp .java .py .js .ts .go .rs .sh"
+            ;;
+    esac
+}
+
+# Find and kill process by name
+killp() {
+    if [ -z "$1" ]; then
+        echo "Usage: killp <process_name>"
+        return 1
+    fi
+    ps aux | grep -v grep | grep "$1" | awk '{print $2}' | xargs kill -9
+}
+
+# Create a backup of a file
+backup() {
+    if [ -z "$1" ]; then
+        echo "Usage: backup <file>"
+        return 1
+    fi
+    cp "$1" "$1.backup.$(date +%Y%m%d_%H%M%S)"
+    echo "Backup created: $1.backup.$(date +%Y%m%d_%H%M%S)"
+}
+
+# Quick project setup
+init-project() {
+    project_name="$1"
+    project_type="${2:-basic}"
+
+    if [ -z "$project_name" ]; then
+        echo "Usage: init-project <name> [type]"
+        echo "Types: python, node, go, rust, java, basic"
+        return 1
+    fi
+
+    mkdir -p "$project_name" && cd "$project_name"
+
+    case "$project_type" in
+        python)
+            echo "# $project_name" > README.md
+            echo "*.pyc\n__pycache__/\nvenv/\n.env" > .gitignore
+            python3 -m venv venv
+            echo "Python project initialized"
+            ;;
+        node)
+            npm init -y
+            echo "node_modules/\n.env\ndist/" > .gitignore
+            echo "# $project_name" > README.md
+            echo "Node.js project initialized"
+            ;;
+        go)
+            go mod init "$project_name"
+            echo "# $project_name" > README.md
+            echo "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}" > main.go
+            echo "Go project initialized"
+            ;;
+        rust)
+            cargo init --name "$project_name"
+            echo "Rust project initialized"
+            ;;
+        java)
+            mkdir -p src/main/java src/test/java
+            echo "# $project_name" > README.md
+            echo "*.class\ntarget/\n.idea/" > .gitignore
+            echo "Java project initialized"
+            ;;
+        *)
+            echo "# $project_name" > README.md
+            touch .gitignore
+            echo "Basic project initialized"
+            ;;
+    esac
+
+    git init
+    git add .
+    git commit -m "Initial commit"
+}
+
+# Quick file search and edit
+# Extract any archive
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar e "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)     echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Quick Python HTTP server
+server() {
+    local port="${1:-8000}"
+    python3 -m http.server "$port"
+}
+
+# Search and replace in files
+replace() {
+    if [ $# -ne 3 ]; then
+        echo "Usage: replace <find> <replace> <file_pattern>"
+        return 1
+    fi
+    fd "$3" -x sd "$1" "$2" {}
+}
+
+# Quick compile and run for different languages
+run() {
+    file="$1"
+    case "$file" in
+        *.c)
+            echo "Compiling C: $file"
+            gcc -Wall -Wextra -std=c11 -o "${file%.c}" "$file" && "./${file%.c}"
+            ;;
+        *.cpp|*.cc)
+            echo "Compiling C++: $file"
+            g++ -Wall -Wextra -std=c++17 -o "${file%.*}" "$file" && "./${file%.*}"
+            ;;
+        *.java)
+            echo "Compiling Java: $file"
+            javac -encoding UTF-8 "$file" && java -Dfile.encoding=UTF-8 "${file%.java}"
+            ;;
+        *.py)
+            echo "Running Python: $file"
+            python3 "$file"
+            ;;
+        *.js)
+            echo "Running JavaScript: $file"
+            node "$file"
+            ;;
+        *.ts)
+            echo "Running TypeScript: $file"
+            ts-node "$file"
+            ;;
+        *.go)
+            echo "Running Go: $file"
+            go run "$file"
+            ;;
+        *.rs)
+            echo "Compiling Rust: $file"
+            rustc "$file" && "./${file%.rs}"
+            ;;
+        *.sh)
+            echo "Running Shell Script: $file"
+            bash "$file"
+            ;;
+        *)
+            echo "Unsupported file type: $file"
+            echo "Supported: .c .cpp .java .py .js .ts .go .rs .sh"
+            ;;
+    esac
+}
+
+# Find and kill process by name
+killp() {
+    if [ -z "$1" ]; then
+        echo "Usage: killp <process_name>"
+        return 1
+    fi
+    ps aux | grep -v grep | grep "$1" | awk '{print $2}' | xargs kill -9
+}
+
+# Create a backup of a file
+backup() {
+    if [ -z "$1" ]; then
+        echo "Usage: backup <file>"
+        return 1
+    fi
+    cp "$1" "$1.backup.$(date +%Y%m%d_%H%M%S)"
+    echo "Backup created: $1.backup.$(date +%Y%m%d_%H%M%S)"
+}
+
+# Quick project setup
+init-project() {
+    project_name="$1"
+    project_type="${2:-basic}"
+
+    if [ -z "$project_name" ]; then
+        echo "Usage: init-project <name> [type]"
+        echo "Types: python, node, go, rust, java, basic"
+        return 1
+    fi
+
+    mkdir -p "$project_name" && cd "$project_name"
+
+    case "$project_type" in
+        python)
+            echo "# $project_name" > README.md
+            echo "*.pyc\n__pycache__/\nvenv/\n.env" > .gitignore
+            python3 -m venv venv
+            echo "Python project initialized"
+            ;;
+        node)
+            npm init -y
+            echo "node_modules/\n.env\ndist/" > .gitignore
+            echo "# $project_name" > README.md
+            echo "Node.js project initialized"
+            ;;
+        go)
+            go mod init "$project_name"
+            echo "# $project_name" > README.md
+            echo "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}" > main.go
+            echo "Go project initialized"
+            ;;
+        rust)
+            cargo init --name "$project_name"
+            echo "Rust project initialized"
+            ;;
+        java)
+            mkdir -p src/main/java src/test/java
+            echo "# $project_name" > README.md
+            echo "*.class\ntarget/\n.idea/" > .gitignore
+            echo "Java project initialized"
+            ;;
+        *)
+            echo "# $project_name" > README.md
+            touch .gitignore
+            echo "Basic project initialized"
+            ;;
+    esac
+
+    git init
+    git add .
+    git commit -m "Initial commit"
+}
+
+# Quick file search and edit
+>>>>>>> refs/remotes/origin/default-version
 fe() {
   local file
   file=$(fzf --preview 'bat --style=numbers --color=always --theme=TwoDark {}' --preview-window 'right:60%') && nvim "$file"
@@ -154,15 +489,15 @@ pf() {
 init-project() {
   local name="$1"
   local type="${2:-basic}"
-  
+
   if [[ -z "$name" ]]; then
     echo "Usage: init-project <name> [python|node|go|rust|java]"
     return 1
   fi
-  
+
   mkdir -p "$HOME/Developer/projects/$name"
   cd "$HOME/Developer/projects/$name"
-  
+
   case "$type" in
     python)
       python3 -m venv venv
@@ -189,7 +524,7 @@ init-project() {
       echo "# $name\n\nBasic project" > README.md
       ;;
   esac
-  
+
   nvim .
 }
 
@@ -200,7 +535,7 @@ run() {
     echo "Usage: run <filename>"
     return 1
   fi
-  
+
   case "${file##*.}" in
     py) python3 "$file" ;;
     js) node "$file" ;;
