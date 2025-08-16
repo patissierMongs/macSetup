@@ -1,61 +1,56 @@
 // ═══════════════════════════════════════════════════════════════
-// Zellij Configuration
+// Zellij Configuration (Prefix 방식, Alt 충돌 제거)
+// Prefix: Ctrl+g  (원하면 "Ctrl a" 등으로 변경 가능)
+// 목적: AeroSpace (Alt+h/j/k/l, Alt+숫자 등) 과 모든 충돌 제거
+// 사용법 예: Ctrl+g 누른 뒤 h (포커스 왼쪽), Ctrl+g r (오른쪽 새 pane)
 // ═══════════════════════════════════════════════════════════════
 
 keybinds clear-defaults=true {
     normal {
-        // Pane navigation
-        bind "Alt h" { MoveFocus "Left"; }
-        bind "Alt l" { MoveFocus "Right"; }
-        bind "Alt j" { MoveFocus "Down"; }
-        bind "Alt k" { MoveFocus "Up"; }
+        // ---- Pane focus ----
+        bind "g h" { MoveFocus "Left"; }
+        bind "g j" { MoveFocus "Down"; }
+        bind "g k" { MoveFocus "Up"; }
+        bind "g l" { MoveFocus "Right"; }
 
-        // Pane management
-        bind "Alt n" { NewPane; }
-        bind "Alt d" { NewPane "Down"; }
-        bind "Alt r" { NewPane "Right"; }
-        bind "Alt x" { CloseFocus; }
-        bind "Alt f" { ToggleFocusFullscreen; }
-        bind "Alt z" { TogglePaneFrames; }
+        // ---- Pane management ----
+        bind "g r" { NewPane "Right"; }   // split right (vertical)
+        bind "g d" { NewPane "Down"; }    // split down (horizontal)
+        bind "g x" { CloseFocus; }
+        bind "g f" { ToggleFocusFullscreen; }
+        bind "g z" { TogglePaneFrames; }
 
-        // Tab management
-        bind "Alt t" { NewTab; }
-        bind "Alt Tab" { GoToNextTab; }
-        bind "Alt Shift Tab" { GoToPreviousTab; }
-        bind "Alt 1" { GoToTab 1; }
-        bind "Alt 2" { GoToTab 2; }
-        bind "Alt 3" { GoToTab 3; }
-        bind "Alt 4" { GoToTab 4; }
-        bind "Alt 5" { GoToTab 5; }
-        bind "Alt 6" { GoToTab 6; }
-        bind "Alt 7" { GoToTab 7; }
-        bind "Alt 8" { GoToTab 8; }
-        bind "Alt 9" { GoToTab 9; }
-        bind "Alt w" { CloseTab; }
-        bind "Alt [" { GoToPreviousTab; }
-        bind "Alt ]" { GoToNextTab; }
-        bind "Alt Shift r" { SwitchToMode "RenameTab"; }
+        // ---- Tabs ----
+        bind "g t" { NewTab; }
+        bind "g 1" { GoToTab 1; }
+        bind "g 2" { GoToTab 2; }
+        bind "g 3" { GoToTab 3; }
+        bind "g 4" { GoToTab 4; }
+        bind "g 5" { GoToTab 5; }
+        bind "g 6" { GoToTab 6; }
+        bind "g 7" { GoToTab 7; }
+        bind "g 8" { GoToTab 8; }
+        bind "g 9" { GoToTab 9; }
+        bind "g ]" { GoToNextTab; }
+        bind "g [" { GoToPreviousTab; }
+        bind "g w" { CloseTab; }
+        bind "g R" { SwitchToMode "RenameTab"; }  // Shift + r after prefix
 
-        // Resize mode
-        bind "Alt =" { SwitchToMode "Resize"; }
+        // ---- Mode switching ----
+        bind "g =" { SwitchToMode "Resize"; }
+        bind "g m" { SwitchToMode "Move"; }
+        bind "g s" { SwitchToMode "Scroll"; }
+        bind "g /" { SwitchToMode "EnterSearch"; SearchInput 0; }
+        bind "g o" { SwitchToMode "Session"; }
 
-        // Move mode
-        bind "Alt m" { SwitchToMode "Move"; }
+        // ---- Session / quit ----
+        bind "g q" { Quit; }
 
-        // Scroll mode
-        bind "Alt s" { SwitchToMode "Scroll"; }
-
-        // Session management
-        bind "Alt o" { SwitchToMode "Session"; }
-        bind "Alt q" { Quit; }
-
-        // Search
-        bind "Alt /" { SwitchToMode "EnterSearch"; SearchInput 0; }
-
-        // Tmux compatibility
+        // ---- Tmux compatibility (single key, no prefix) ----
         bind "Ctrl b" { SwitchToMode "Tmux"; }
     }
 
+    // ---- Resize mode ----
     resize {
         bind "h" "Left" { Resize "Increase Left"; }
         bind "j" "Down" { Resize "Increase Down"; }
@@ -70,6 +65,7 @@ keybinds clear-defaults=true {
         bind "Esc" "Enter" { SwitchToMode "Normal"; }
     }
 
+    // ---- Move mode ----
     move {
         bind "h" "Left" { MovePane "Left"; }
         bind "j" "Down" { MovePane "Down"; }
@@ -79,6 +75,7 @@ keybinds clear-defaults=true {
         bind "Esc" "Enter" { SwitchToMode "Normal"; }
     }
 
+    // ---- Scroll mode ----
     scroll {
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
@@ -89,6 +86,7 @@ keybinds clear-defaults=true {
         bind "Esc" "Enter" { SwitchToMode "Normal"; }
     }
 
+    // ---- Search mode ----
     search {
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
@@ -102,11 +100,13 @@ keybinds clear-defaults=true {
         bind "Esc" "Enter" { SwitchToMode "Normal"; }
     }
 
+    // ---- Session mode ----
     session {
         bind "d" { Detach; }
         bind "Esc" "Enter" { SwitchToMode "Normal"; }
     }
 
+    // ---- Tmux mode ----
     tmux {
         bind "d" { NewPane "Down"; SwitchToMode "Normal"; }
         bind "r" { NewPane "Right"; SwitchToMode "Normal"; }
@@ -164,3 +164,9 @@ simplified_ui false
 on_force_close "quit"
 scroll_buffer_size 10000
 clipboard "system"
+
+options {
+  keybinds {
+    prefix "Ctrl g"
+  }
+}
