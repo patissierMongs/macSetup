@@ -139,7 +139,7 @@ alias mvnr="mvn spring-boot:run"
 # C/C++
 alias gpp="g++ -std=c++17 -Wall -Wextra -O2"
 alias gccc="gcc -std=c11 -Wall -Wextra -O2"
-alias make="make -j$(nproc)"
+alias make="make -j$(sysctl -n hw.ncpu)"
 alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
 
 # Docker
@@ -269,16 +269,6 @@ extract() {
 server() {
     local port="${1:-8000}"
     python3 -m http.server "$port"
-}
-
-# Git commit with message
-gcam() {
-    git add . && git commit -m "$1"
-}
-
-# Git commit and push
-gcamp() {
-    git add . && git commit -m "$1" && git push
 }
 
 # Search and replace in files
