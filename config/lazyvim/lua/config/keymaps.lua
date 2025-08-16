@@ -9,11 +9,11 @@ local opts = { noremap = true, silent = true }
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Better window navigation
-keymap.set("n", "<C-h>", "<C-w>h", opts)
-keymap.set("n", "<C-j>", "<C-w>j", opts)
-keymap.set("n", "<C-k>", "<C-w>k", opts)
-keymap.set("n", "<C-l>", "<C-w>l", opts)
+-- Better window navigation (avoid conflicts with zellij Ctrl-z leader)
+keymap.set("n", "<leader>h", "<C-w>h", opts)
+keymap.set("n", "<leader>j", "<C-w>j", opts)
+keymap.set("n", "<leader>k", "<C-w>k", opts)
+keymap.set("n", "<leader>l", "<C-w>l", opts)
 
 -- Resize windows with arrows
 keymap.set("n", "<C-Up>", ":resize -2<CR>", opts)
@@ -26,18 +26,18 @@ keymap.set("n", "<S-l>", ":bnext<CR>", opts)
 keymap.set("n", "<S-h>", ":bprevious<CR>", opts)
 keymap.set("n", "<leader>bd", ":bdelete<CR>", opts)
 
--- Move text up and down
-keymap.set("n", "<A-j>", ":m .+1<CR>==", opts)
-keymap.set("n", "<A-k>", ":m .-2<CR>==", opts)
-keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
-keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
+-- Move text up and down (avoid Alt conflicts with aerospace)
+keymap.set("n", "<leader>mj", ":m .+1<CR>==", opts)
+keymap.set("n", "<leader>mk", ":m .-2<CR>==", opts)
+keymap.set("v", "<leader>mj", ":m '>+1<CR>gv=gv", opts)
+keymap.set("v", "<leader>mk", ":m '<-2<CR>gv=gv", opts)
 
 -- Stay in indent mode
 keymap.set("v", "<", "<gv", opts)
 keymap.set("v", ">", ">gv", opts)
 
--- Clear highlights
-keymap.set("n", "<leader>h", "<cmd>nohlsearch<CR>", opts)
+-- Clear highlights (moved to avoid conflict with window navigation)
+keymap.set("n", "<leader>nh", "<cmd>nohlsearch<CR>", opts)
 
 -- Save file
 keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })

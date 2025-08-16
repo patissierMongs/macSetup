@@ -1,15 +1,13 @@
 # ═══════════════════════════════════════════════════════════════
-# Zsh Profile (loaded for login shells)
+# ZSH Profile Configuration
 # ═══════════════════════════════════════════════════════════════
 
-# Homebrew on Apple Silicon
+# Homebrew initialization
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# pyenv
-if command -v pyenv &> /dev/null; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init --path)"
+# Java environment
+if [ -f "$HOME/.java_home" ]; then
+  source "$HOME/.java_home"
 fi

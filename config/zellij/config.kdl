@@ -4,55 +4,47 @@
 
 keybinds clear-defaults=true {
     normal {
-        // Pane navigation
-        bind "Alt h" { MoveFocus "Left"; }
-        bind "Alt l" { MoveFocus "Right"; }
-        bind "Alt j" { MoveFocus "Down"; }
-        bind "Alt k" { MoveFocus "Up"; }
+        // Pane navigation (using Ctrl+Space as leader to avoid conflicts)
+        bind "Ctrl Space" "h" { MoveFocus "Left"; }
+        bind "Ctrl Space" "l" { MoveFocus "Right"; }
+        bind "Ctrl Space" "j" { MoveFocus "Down"; }
+        bind "Ctrl Space" "k" { MoveFocus "Up"; }
 
-        // Pane management
-        bind "Alt n" { NewPane; }
-        bind "Alt d" { NewPane "Down"; }
-        bind "Alt r" { NewPane "Right"; }
-        bind "Alt x" { CloseFocus; }
-        bind "Alt f" { ToggleFocusFullscreen; }
-        bind "Alt z" { TogglePaneFrames; }
+        // Pane management (leader-based)
+        bind "Ctrl Space" "n" { NewPane; }
+        bind "Ctrl Space" "d" { NewPane "Down"; }
+        bind "Ctrl Space" "r" { NewPane "Right"; }
+        bind "Ctrl Space" "x" { CloseFocus; }
+        bind "Ctrl Space" "f" { ToggleFocusFullscreen; }
+        bind "Ctrl Space" "z" { TogglePaneFrames; }
 
-        // Tab management
-        bind "Alt t" { NewTab; }
-        bind "Alt Tab" { GoToNextTab; }
-        bind "Alt Shift Tab" { GoToPreviousTab; }
-        bind "Alt 1" { GoToTab 1; }
-        bind "Alt 2" { GoToTab 2; }
-        bind "Alt 3" { GoToTab 3; }
-        bind "Alt 4" { GoToTab 4; }
-        bind "Alt 5" { GoToTab 5; }
-        bind "Alt 6" { GoToTab 6; }
-        bind "Alt 7" { GoToTab 7; }
-        bind "Alt 8" { GoToTab 8; }
-        bind "Alt 9" { GoToTab 9; }
-        bind "Alt w" { CloseTab; }
-        bind "Alt [" { GoToPreviousTab; }
-        bind "Alt ]" { GoToNextTab; }
-        bind "Alt Shift r" { SwitchToMode "RenameTab"; }
+        // Tab management (leader-based to avoid aerospace Alt+1-9)
+        bind "Ctrl Space" "t" { NewTab; }
+        bind "Ctrl Space" "Tab" { GoToNextTab; }
+        bind "Ctrl Space" "Shift Tab" { GoToPreviousTab; }
+        bind "Ctrl Space" "1" { GoToTab 1; }
+        bind "Ctrl Space" "2" { GoToTab 2; }
+        bind "Ctrl Space" "3" { GoToTab 3; }
+        bind "Ctrl Space" "4" { GoToTab 4; }
+        bind "Ctrl Space" "5" { GoToTab 5; }
+        bind "Ctrl Space" "6" { GoToTab 6; }
+        bind "Ctrl Space" "7" { GoToTab 7; }
+        bind "Ctrl Space" "8" { GoToTab 8; }
+        bind "Ctrl Space" "9" { GoToTab 9; }
+        bind "Ctrl Space" "w" { CloseTab; }
+        bind "Ctrl Space" "[" { GoToPreviousTab; }
+        bind "Ctrl Space" "]" { GoToNextTab; }
+        bind "Ctrl Space" "Shift r" { SwitchToMode "RenameTab"; }
 
-        // Resize mode
-        bind "Alt =" { SwitchToMode "Resize"; }
+        // Mode switching (leader-based)
+        bind "Ctrl Space" "=" { SwitchToMode "Resize"; }
+        bind "Ctrl Space" "m" { SwitchToMode "Move"; }
+        bind "Ctrl Space" "s" { SwitchToMode "Scroll"; }
+        bind "Ctrl Space" "o" { SwitchToMode "Session"; }
+        bind "Ctrl Space" "q" { Quit; }
+        bind "Ctrl Space" "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
 
-        // Move mode
-        bind "Alt m" { SwitchToMode "Move"; }
-
-        // Scroll mode
-        bind "Alt s" { SwitchToMode "Scroll"; }
-
-        // Session management
-        bind "Alt o" { SwitchToMode "Session"; }
-        bind "Alt q" { Quit; }
-
-        // Search
-        bind "Alt /" { SwitchToMode "EnterSearch"; SearchInput 0; }
-
-        // Tmux compatibility
+        // Tmux compatibility (unchanged)
         bind "Ctrl b" { SwitchToMode "Tmux"; }
     }
 
@@ -154,7 +146,7 @@ default_layout "dev"
 default_shell "zsh"
 pane_frames false
 copy_on_select true
-scrollback_editor "/opt/homebrew/bin/nvim"
+scrollback_editor "nvim"
 session_serialization true
 serialize_pane_viewport true
 mouse_mode true
