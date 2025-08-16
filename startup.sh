@@ -92,7 +92,7 @@ FORMULAE=(
 
 CASKS=(
   # Core applications
-  aerospace raycast visual-studio-code font-jetbrains-mono-nerd-font
+  nikitabobko/tap/aerospace raycast visual-studio-code font-jetbrains-mono-nerd-font
 )
 
 # Filter out comments and check existing packages
