@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# macSetup startup script (download-prefetch parallel ON by default)
+# macSetup DEFAULT startup script - Essential packages only
 
 # =============== Colors ===============
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -32,7 +32,7 @@ log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_err()   { echo -e "${RED}[ERR]${NC} $*"; }
 
 echo -e "${CYAN}══════════════════════════════════════════════════════════════${NC}"
-echo -e "${MAGENTA}   macOS Development Environment Auto-Configuration${NC}"
+echo -e "${MAGENTA}   macOS Development Environment Auto-Configuration (DEFAULT)${NC}"
 echo -e "${CYAN}══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}병렬 다운로드(prefetch) 기본 활성화: PARALLEL_DOWNLOADS=$PARALLEL_DOWNLOADS (DL_JOBS=$DL_JOBS)${NC}"
 
@@ -74,23 +74,25 @@ fi
 echo -e "\n${BLUE}[Step 2/10] Installing packages via Homebrew...${NC}"
 
 FORMULAE=(
+  # Core development tools
   git neovim wezterm zellij starship
-  eza bat fd ripgrep fzf zoxide delta gh jq tldr htop ncdu tree wget curl tmux lazygit lazydocker glow httpie dust duf broot procs sd choose tokei hyperfine gping bandwhich
-  python@3.12 pipx pyenv gcc cmake llvm openjdk maven gradle node yarn pnpm rust go
-  lua-language-server rust-analyzer gopls typescript-language-server pyright ruff-lsp stylua shfmt shellcheck
-  postgresql@16 mysql redis sqlite
-  docker podman kubectl k9s helm
-  yq watchman direnv asdf
-  # Additional useful tools
-  mas bottom silicon grex tealdeer speedtest-cli thefuck mcfly zsh-vi-mode
-  awscli terraform ansible
-  # Dev tools
-  gh-dash dive ctop lazygit-extras fx ranger nnn
+  # Essential command line tools
+  eza bat fd ripgrep fzf zoxide delta gh jq htop tree curl
+  # Programming languages and tools
+  python@3.12 pipx gcc cmake node rust go openjdk
+  # Debugging tools
+  llvm gdb
+  # Language servers (essential ones only)
+  lua-language-server rust-analyzer typescript-language-server pyright
+  # Database (lightweight)
+  sqlite
+  # Version control and formatting
+  lazygit shfmt shellcheck
 )
 
 CASKS=(
+  # Core applications
   aerospace raycast visual-studio-code font-jetbrains-mono-nerd-font
-  docker iterm2 alt-tab monitorcontrol stats hiddenbar rectangle
 )
 
 # Filter out comments and check existing packages
@@ -206,9 +208,14 @@ else
 fi
 
 PYTHON_TOOLS=(
-  poetry black isort mypy ruff pytest pre-commit jupyterlab ipython
-  pgcli mycli litecli cookiecutter virtualenv debugpy
+  poetry black ruff pytest virtualenv debugpy
 )
+
+# Go tools installation (if Go is available)
+if command -v go >/dev/null 2>&1; then
+  log_info "Installing Go debugging tools"
+  go install github.com/go-delve/delve/cmd/dlv@latest >/dev/null 2>&1 && log_ok "delve installed" || log_warn "delve install failed"
+fi
 
 if [ "$PIPX_PREFETCH" = "1" ]; then
   log_info "Prefetching pip packages (parallel) → $PREFETCH_DIR/pipx"
@@ -280,11 +287,9 @@ backup_and_link "$SCRIPT_DIR/config/starship/starship.toml"    "$HOME/.config/st
 echo -e "\n${BLUE}[Step 7/10] VS Code setup...${NC}"
 if command -v code >/dev/null 2>&1; then
   VSCODE_EXTS=(
-    ms-python.python ms-python.vscode-pylance ms-python.debugpy
-    ms-vscode.cpptools vscjava.vscode-java-pack vscodevim.vim GitHub.copilot
-    eamodio.gitlens PKief.material-icon-theme zhuangtongfa.material-theme
-    ms-vscode-remote.remote-ssh ms-azuretools.vscode-docker redhat.vscode-yaml
-    esbenp.prettier-vscode
+    ms-python.python ms-python.vscode-pylance vscodevim.vim
+    ms-vscode.cpptools vscjava.vscode-java-pack
+    eamodio.gitlens esbenp.prettier-vscode
   )
   for e in "${VSCODE_EXTS[@]}"; do
     code --install-extension "$e" >/dev/null 2>&1 || log_warn "Ext fail: $e"
@@ -303,8 +308,7 @@ fi
 echo -e "\n${BLUE}[Step 8/10] Global Node packages...${NC}"
 if command -v npm >/dev/null 2>&1; then
   NPM_PACKAGES=(
-    typescript ts-node nodemon eslint prettier jest @angular/cli @vue/cli
-    create-react-app vercel netlify-cli firebase-tools pm2 serve live-server json-server
+    typescript ts-node nodemon eslint prettier
   )
   if [ "$NPM_PREFETCH" = "1" ]; then
     log_info "Prefetching npm tarballs (parallel) → $PREFETCH_DIR/npm"

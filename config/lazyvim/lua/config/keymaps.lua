@@ -83,3 +83,54 @@ keymap.set("n", "<F11>", "<cmd>lua require'dap'.step_into()<CR>", { desc = "Debu
 keymap.set("n", "<F12>", "<cmd>lua require'dap'.step_out()<CR>", { desc = "Debug: Step Out" })
 keymap.set("n", "<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", { desc = "Toggle Breakpoint" })
 keymap.set("n", "<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", { desc = "Open REPL" })
+keymap.set("n", "<leader>dc", "<cmd>lua require'dap'.clear_breakpoints()<CR>", { desc = "Clear Breakpoints" })
+keymap.set("n", "<leader>dt", "<cmd>lua require'dap'.terminate()<CR>", { desc = "Terminate Debug" })
+keymap.set("n", "<leader>du", "<cmd>lua require'dapui'.toggle()<CR>", { desc = "Toggle Debug UI" })
+
+-- Build shortcuts  
+keymap.set("n", "<leader>bb", "<cmd>OverseerRun<CR>", { desc = "Build: Run Task" })
+keymap.set("n", "<leader>bt", "<cmd>OverseerToggle<CR>", { desc = "Build: Toggle Task List" })
+keymap.set("n", "<leader>bc", "<cmd>OverseerRunCmd<CR>", { desc = "Build: Run Command" })
+
+-- Language-specific shortcuts
+keymap.set("n", "<leader>lr", "<cmd>RunCode<CR>", { desc = "Run: Execute Code" })
+keymap.set("n", "<leader>lc", function()
+  local ft = vim.bo.filetype
+  if ft == "rust" then
+    vim.cmd("terminal cargo build")
+  elseif ft == "go" then
+    vim.cmd("terminal go build .")
+  elseif ft == "java" then
+    vim.cmd("terminal javac " .. vim.fn.expand("%"))
+  elseif ft == "c" or ft == "cpp" then
+    local file = vim.fn.expand("%")
+    local name = vim.fn.expand("%:r")
+    vim.cmd("terminal gcc -g -o " .. name .. " " .. file)
+  else
+    print("No compile command for filetype: " .. ft)
+  end
+end, { desc = "Compile: Build current file" })
+
+keymap.set("n", "<leader>lt", function()
+  local ft = vim.bo.filetype
+  if ft == "rust" then
+    vim.cmd("terminal cargo test")
+  elseif ft == "go" then
+    vim.cmd("terminal go test ./...")
+  elseif ft == "java" then
+    vim.cmd("terminal mvn test")
+  elseif ft == "python" then
+    vim.cmd("terminal python -m pytest")
+  else
+    print("No test command for filetype: " .. ft)
+  end
+end, { desc = "Test: Run tests" })
+
+-- Auto-save toggle
+keymap.set("n", "<leader>as", "<cmd>ASToggle<CR>", { desc = "Toggle Auto Save" })
+
+-- Quick terminal commands
+keymap.set("n", "<leader>ts", "<cmd>TermSelect<CR>", { desc = "Terminal: Select" })
+keymap.set("n", "<leader>tf", "<cmd>ToggleTerm direction=float<CR>", { desc = "Terminal: Float" })
+keymap.set("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>", { desc = "Terminal: Horizontal" })
+keymap.set("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { desc = "Terminal: Vertical" })

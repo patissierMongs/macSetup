@@ -12,38 +12,15 @@ plugins=(
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-completions
-    fast-syntax-highlighting
     zsh-vi-mode
-    docker
-    docker-compose
-    kubectl
-    terraform
-    aws
-    npm
-    yarn
     python
-    pip
     golang
     rust
     fzf
-    tmux
     macos
-    vscode
-    gh
-    z
     colored-man-pages
-    command-not-found
     extract
     sudo
-    web-search
-    jsontools
-    urltools
-    copypath
-    copyfile
-    copybuffer
-    dirhistory
-    history
-    aliases
 )
 
 # Load Oh My Zsh

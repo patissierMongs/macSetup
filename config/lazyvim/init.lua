@@ -105,6 +105,8 @@ return {
         lldb = "lldb-vscode"
       end
       dap.adapters.lldb = { type = "executable", command = lldb, name = "lldb" }
+      
+      -- C/C++ configurations
       local cpp_cfg = {
         {
           name = "Launch",
@@ -117,10 +119,96 @@ return {
           stopOnEntry = false,
           args = {},
         },
+        {
+          name = "Launch current file",
+          type = "lldb",
+          request = "launch",
+          program = function()
+            local file = vim.fn.expand("%:r")
+            return vim.fn.getcwd() .. "/" .. file
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+          args = {},
+          preLaunchTask = "Build current file",
+        },
       }
       dap.configurations.cpp = cpp_cfg
       dap.configurations.c = cpp_cfg
-      dap.configurations.rust = cpp_cfg
+      
+      -- Rust configuration
+      dap.configurations.rust = {
+        {
+          name = "Launch",
+          type = "lldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+          args = {},
+        },
+        {
+          name = "Launch cargo project",
+          type = "lldb",
+          request = "launch",
+          program = function()
+            local handle = io.popen("cargo metadata --format-version 1 | jq -r '.target_directory'")
+            local target_dir = handle:read("*l")
+            handle:close()
+            
+            local handle2 = io.popen("cargo metadata --format-version 1 | jq -r '.packages[0].name'")
+            local package_name = handle2:read("*l")
+            handle2:close()
+            
+            return target_dir .. "/debug/" .. package_name
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+          args = {},
+          preLaunchTask = "cargo build",
+        },
+      }
+      
+      -- Go configuration
+      dap.adapters.go = {
+        type = "executable",
+        command = "dlv",
+        args = { "dap", "-l", "127.0.0.1:38697" },
+      }
+      dap.configurations.go = {
+        {
+          type = "go",
+          name = "Debug",
+          request = "launch",
+          program = "${file}",
+        },
+        {
+          type = "go",
+          name = "Debug Package",
+          request = "launch",
+          program = "${workspaceFolder}",
+        },
+        {
+          type = "go",
+          name = "Debug test",
+          request = "launch",
+          mode = "test",
+          program = "${workspaceFolder}",
+        },
+      }
+      
+      -- Java configuration (requires nvim-jdtls)
+      dap.configurations.java = {
+        {
+          type = "java",
+          request = "attach",
+          name = "Debug (Attach) - Remote",
+          hostName = "127.0.0.1",
+          port = 5005,
+        },
+      }
     end,
   },
   {
@@ -149,10 +237,117 @@ return {
           python = "python3 -u",
           typescript = "cd $dir && ts-node $fileName",
           rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
-          c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
-          cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+          c = "cd $dir && gcc -g -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
+          cpp = "cd $dir && g++ -g -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
           go = "go run",
         },
+        mode = "term",
+        focus = true,
+        startinsert = false,
+      })
+    end,
+  },
+  {
+    "stevearc/overseer.nvim",
+    opts = {
+      templates = { "builtin", "user.cpp_build", "user.rust_build", "user.go_build", "user.java_build" },
+      task_list = {
+        direction = "bottom",
+        min_height = 25,
+        max_height = 25,
+        default_detail = 1,
+      },
+    },
+    config = function(_, opts)
+      require("overseer").setup(opts)
+      
+      -- Custom build templates
+      local overseer = require("overseer")
+      
+      -- C++ build template
+      overseer.register_template({
+        name = "cpp_build",
+        builder = function()
+          return {
+            cmd = { "g++" },
+            args = { "-g", "-o", vim.fn.expand("%:r"), vim.fn.expand("%") },
+            components = { "default" },
+          }
+        end,
+        condition = {
+          filetype = { "cpp" },
+        },
+      })
+      
+      -- Rust build template
+      overseer.register_template({
+        name = "rust_build",
+        builder = function()
+          return {
+            cmd = { "cargo" },
+            args = { "build" },
+            components = { "default" },
+          }
+        end,
+        condition = {
+          filetype = { "rust" },
+        },
+      })
+      
+      -- Go build template
+      overseer.register_template({
+        name = "go_build",
+        builder = function()
+          return {
+            cmd = { "go" },
+            args = { "build", "." },
+            components = { "default" },
+          }
+        end,
+        condition = {
+          filetype = { "go" },
+        },
+      })
+      
+      -- Java build template
+      overseer.register_template({
+        name = "java_build",
+        builder = function()
+          return {
+            cmd = { "javac" },
+            args = { vim.fn.expand("%") },
+            components = { "default" },
+          }
+        end,
+        condition = {
+          filetype = { "java" },
+        },
+      })
+    end,
+  },
+  {
+    "Pocco81/auto-save.nvim",
+    config = function()
+      require("auto-save").setup({
+        enabled = false, -- 기본적으로 비활성화, 토글로 사용
+        execution_message = {
+          message = function()
+            return ("AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S"))
+          end,
+          dim = 0.18,
+          cleaning_interval = 1250,
+        },
+        trigger_events = {"InsertLeave", "TextChanged"},
+        condition = function(buf)
+          local fn = vim.fn
+          local utils = require("auto-save.utils.data")
+          if fn.getbufvar(buf, "&modifiable") == 1 and utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
+            return true
+          end
+          return false
+        end,
+        write_all_buffers = false,
+        debounce_delay = 135,
       })
     end,
   },
