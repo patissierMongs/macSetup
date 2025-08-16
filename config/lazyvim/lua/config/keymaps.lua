@@ -26,11 +26,11 @@ keymap.set("n", "<S-l>", ":bnext<CR>", opts)
 keymap.set("n", "<S-h>", ":bprevious<CR>", opts)
 keymap.set("n", "<leader>bd", ":bdelete<CR>", opts)
 
--- Move text up and down
-keymap.set("n", "<A-j>", ":m .+1<CR>==", opts)
-keymap.set("n", "<A-k>", ":m .-2<CR>==", opts)
-keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
-keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
+-- Move text up and down (migrated from <A-j>/<A-k> to avoid AeroSpace Alt conflicts)
+keymap.set("n", "<leader>J", ":m .+1<CR>==", { desc = "Move line down" })
+keymap.set("n", "<leader>K", ":m .-2<CR>==", { desc = "Move line up" })
+keymap.set("v", "<leader>J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+keymap.set("v", "<leader>K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- Stay in indent mode
 keymap.set("v", "<", "<gv", opts)
@@ -60,9 +60,9 @@ local function compile_and_run()
     javascript = "node " .. file,
     typescript = "ts-node " .. file,
     java = "javac " .. file .. " && java " .. name,
-    c = "gcc -o " .. name .. " " .. file .. " && ./" .. name,
-    cpp = "g++ -o " .. name .. " " .. file .. " && ./" .. name,
-    rust = "rustc " .. file .. " && ./" .. name,
+    c = "gcc -o " .. name .. " " .. file .. " && ./'" .. name,
+    cpp = "g++ -o " .. name .. " " .. file .. " && ./'" .. name,
+    rust = "rustc " .. file .. " && ./'" .. name,
     go = "go run " .. file,
   }
 
